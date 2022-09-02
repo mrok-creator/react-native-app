@@ -1,7 +1,13 @@
 import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+
+// import icons
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 
 import SignInScreen from "../screens/auth/SignInScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
@@ -10,7 +16,7 @@ import CreateScreen from "../screens/main/CreateScreen";
 import ProfileScreen from "../screens/main/ProfileScreen";
 
 const AuthStack = createStackNavigator();
-const MainTabs = createBottomTabNavigator();
+const MainTabs = createMaterialBottomTabNavigator();
 
 export const selectNavigation = (isLogin) => {
   if (!isLogin) {
@@ -23,15 +29,71 @@ export const selectNavigation = (isLogin) => {
   }
   return (
     <MainTabs.Navigator
-
-    //   tabBarOptions={{
-    //     activeTintColor: "#63D471",
-    //     inactiveTintColor: "#4E7D55",
-    //   }}
+      labeled={false}
+      activeColor={"#63D471"}
+      inactiveTintColor={"#4E7D55"}
+      barStyle={{
+        backgroundColor: "#0F4F49",
+        paddingBottom: 10,
+      }}
     >
-      <MainTabs.Screen name="Posts" component={PostsScreen} />
-      <MainTabs.Screen name="New Post" component={CreateScreen} />
-      <MainTabs.Screen name="Profile" component={ProfileScreen} />
+      <MainTabs.Screen
+        name="Posts"
+        component={PostsScreen}
+        options={{
+          tabBarIcon: ({ focused, color }) => (
+            <AntDesign
+              name="API"
+              size={32}
+              color={!focused ? "#fff" : "#63D471"}
+              style={{
+                width: 46,
+                height: 46,
+
+                textAlign: "center",
+              }}
+            />
+          ),
+        }}
+      />
+      <MainTabs.Screen
+        name="New Post"
+        component={CreateScreen}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <Entypo
+              name="squared-plus"
+              size={38}
+              color={!focused ? "#fff" : "#63D471"}
+              style={{
+                width: 46,
+                height: 46,
+                textAlign: "center",
+              }}
+            />
+          ),
+        }}
+        style={{}}
+      />
+      <MainTabs.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <AntDesign
+              name="user"
+              size={30}
+              color={!focused ? "#fff" : "#63D471"}
+              style={{
+                width: 46,
+                height: 46,
+                marginTop: 0,
+                textAlign: "center",
+              }}
+            />
+          ),
+        }}
+      />
     </MainTabs.Navigator>
   );
 };
