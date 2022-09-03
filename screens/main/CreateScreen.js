@@ -3,12 +3,48 @@ import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 
+import * as Location from "expo-location";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function CreateScreen({ navigation }) {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [cameraRef, setCameraRef] = useState(null);
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  function toggleCameraType() {
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    );
+  }
+
+  const takePhoto = async () => {
+    if (cameraRef) {
+      const { uri } = await cameraRef.takePictureAsync();
+      const photo = await MediaLibrary.createAssetAsync(uri);
+      const latitude = location.coords.latitude;
+      const longitude = location.coords.longitude;
+
+      navigation.navigate("Feed", {
+        photo: photo.uri,
+        coords: { latitude, longitude },
+      });
+    }
+  };
 
   if (!permission) {
     // Camera permissions are still loading
@@ -31,21 +67,6 @@ export default function CreateScreen({ navigation }) {
       </View>
     );
   }
-
-  function toggleCameraType() {
-    setType((current) =>
-      current === CameraType.back ? CameraType.front : CameraType.back
-    );
-  }
-
-  const takePhoto = async () => {
-    if (cameraRef) {
-      const { uri } = await cameraRef.takePictureAsync();
-      const photo = await MediaLibrary.createAssetAsync(uri);
-
-      navigation.navigate("Feed", { photo: photo.uri });
-    }
-  };
 
   return (
     <View style={styles.container}>

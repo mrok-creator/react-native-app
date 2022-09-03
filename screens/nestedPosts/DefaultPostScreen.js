@@ -5,7 +5,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function DefaultPostScreen({ route, navigation }) {
-  console.log(route.params);
+  console.log("post params", route.params);
+
   return (
     <View style={styles.container}>
       <Text>PostsScreen</Text>
