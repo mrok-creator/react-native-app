@@ -1,10 +1,83 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Camera, CameraType } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 
-export default function CreateScreen() {
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+export default function CreateScreen({ navigation }) {
+  const [type, setType] = useState(CameraType.back);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [cameraRef, setCameraRef] = useState(null);
+
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>
+          We need your permission to show the camera
+        </Text>
+        <TouchableOpacity
+          onPress={requestPermission}
+          style={styles.permissionBtn}
+        >
+          <Text style={styles.permissionBtnTitle}>Надати доступ</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  function toggleCameraType() {
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    );
+  }
+
+  const takePhoto = async () => {
+    if (cameraRef) {
+      const { uri } = await cameraRef.takePictureAsync();
+      const photo = await MediaLibrary.createAssetAsync(uri);
+
+      navigation.navigate("Feed", { photo: photo.uri });
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text>CreateScreen</Text>
+      <Camera
+        style={styles.camera}
+        type={type}
+        ref={(ref) => {
+          setCameraRef(ref);
+        }}
+      >
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.btn} onPress={toggleCameraType}>
+            <MaterialCommunityIcons
+              name="camera-flip-outline"
+              size={35}
+              color="#fff"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              ...styles.btn,
+              alignSelf: "flex-end",
+              marginLeft: -50,
+            }}
+            onPress={takePhoto}
+          >
+            <View style={styles.takePhotoOut}>
+              <View style={styles.takePhotoInner}></View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Camera>
     </View>
   );
 }
@@ -13,6 +86,64 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "transparent",
+    margin: 15,
+  },
+  btn: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "flex-start",
+  },
+  permissionBtn: {
+    height: 44,
+    padding: 10,
+
+    marginHorizontal: 50,
     alignItems: "center",
+
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: "#63D471",
+    borderRadius: 25,
+  },
+
+  permissionBtnTitle: {
+    fontFamily: "Lora-Regular",
+    color: "#fff",
+    fontSize: 18,
+  },
+
+  title: {
+    alignItems: "center",
+    marginBottom: 33,
+    marginTop: 33,
+    color: "4E7D55",
+  },
+
+  takePhotoOut: {
+    borderWidth: 2,
+    borderColor: "white",
+    height: 50,
+    width: 50,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 50,
+  },
+
+  takePhotoInner: {
+    borderWidth: 2,
+    borderColor: "white",
+    height: 40,
+    width: 40,
+    backgroundColor: "white",
+    borderRadius: 50,
   },
 });

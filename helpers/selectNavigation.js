@@ -4,9 +4,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 
 // import icons
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 import SignInScreen from "../screens/auth/SignInScreen";
