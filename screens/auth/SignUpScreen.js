@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
 
 import {
   StyleSheet,
@@ -14,19 +15,21 @@ import {
   Text,
 } from "react-native";
 
-// import { Link } from "react-router-native";
+import { signUp } from "../../redux/auth/auth-operation";
 
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function SignUpScreen() {
+export default function SignUpScreen({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [isKeyboardShow, setIsKeyboardShow] = useState(false);
+
+  const dispatch = useDispatch();
 
   const [fontsLoaded] = useFonts({
     "Lora-Regular": require("../../assets/font/Lora-Regular.ttf"),
@@ -59,7 +62,9 @@ export default function SignUpScreen() {
         email,
         password,
       };
-      Alert.alert("Credentials", `${name}  ${password}`);
+
+      dispatch(signUp(newData));
+
       setName("");
       setEmail("");
       setPassword("");
@@ -91,7 +96,7 @@ export default function SignUpScreen() {
         setIsKeyboardShow(false);
       }}
     >
-      <View style={styles.container} on onLayout={onLayoutRootView}>
+      <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground
           source={require("../../assets/images/bg-art.jpg")}
           style={styles.img}
@@ -99,14 +104,11 @@ export default function SignUpScreen() {
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
-            style={{
-              marginBottom: isKeyboardShow ? 50 : 0,
-            }}
           >
             <View
               style={{
                 ...styles.form,
-                paddingBottom: isKeyboardShow ? 30 : 70,
+                paddingBottom: isKeyboardShow ? 150 : 70,
               }}
             >
               <View style={styles.headerTitle}>
@@ -152,6 +154,26 @@ export default function SignUpScreen() {
                 <Text style={styles.btnTitle}>Зареєструватися</Text>
               </TouchableOpacity>
               {/* <Link to="/profile">Реєструвався? заходь і насолоджуйся)</Link> */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Login")}
+                style={{
+                  marginTop: 12,
+                  alignSelf: "center",
+                }}
+              >
+                <Text style={{ color: "#fff", fontFamily: "Lora-Regular" }}>
+                  Реєструвався раніше?
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#63D471",
+                      fontFamily: "Lora-Bold",
+                    }}
+                  >
+                    {"  "} Увійти
+                  </Text>
+                </Text>
+              </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>

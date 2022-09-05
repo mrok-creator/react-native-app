@@ -21,8 +21,16 @@ export const selectNavigation = (isLogin) => {
   if (!isLogin) {
     return (
       <AuthStack.Navigator>
-        <AuthStack.Screen name="Register" component={SignUpScreen} />
-        <AuthStack.Screen name="Login" component={SignInScreen} />
+        <AuthStack.Screen
+          name="Login"
+          component={SignInScreen}
+          options={{ headerShown: false }}
+        />
+        <AuthStack.Screen
+          name="Register"
+          component={SignUpScreen}
+          options={{ headerShown: false }}
+        />
       </AuthStack.Navigator>
     );
   }
@@ -36,11 +44,12 @@ export const selectNavigation = (isLogin) => {
         paddingBottom: 10,
       }}
     >
+      {/* POSTS SCREEN */}
       <MainTabs.Screen
         name="Posts"
         component={PostsScreen}
         options={{
-          tabBarIcon: ({ focused, color }) => (
+          tabBarIcon: ({ focused }) => (
             <AntDesign
               name="API"
               size={32}
@@ -55,6 +64,8 @@ export const selectNavigation = (isLogin) => {
           ),
         }}
       />
+
+      {/* CREATE POST SCREEN */}
       <MainTabs.Screen
         name="New Post"
         component={CreateScreen}
@@ -74,6 +85,8 @@ export const selectNavigation = (isLogin) => {
         }}
         style={{}}
       />
+
+      {/* PROFILE SCREEN */}
       <MainTabs.Screen
         name="Profile"
         component={ProfileScreen}

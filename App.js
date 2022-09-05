@@ -1,8 +1,13 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { selectNavigation } from "./helpers/selectNavigation";
+import { Provider } from "react-redux";
+
+import { store } from "./redux/store";
+import Main from "./components/Main";
 
 export default function App() {
-  const navigation = selectNavigation(1);
-  return <NavigationContainer>{navigation}</NavigationContainer>;
+  return (
+    <Provider store={store}>
+      <Main />
+    </Provider>
+  );
 }

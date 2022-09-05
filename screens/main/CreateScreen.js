@@ -1,170 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
-import { Camera, CameraType } from "expo-camera";
-import * as MediaLibrary from "expo-media-library";
+import React from "react";
 
-import * as Location from "expo-location";
+import { createStackNavigator } from "@react-navigation/stack";
+import CameraScreen from "../nestedCreateScreen/CameraScreen";
+import CreatePostScreen from "../nestedCreateScreen/CreatePostScreen";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+const CreateStack = createStackNavigator();
 
-export default function CreateScreen({ navigation }) {
-  const [type, setType] = useState(CameraType.back);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
-  const [cameraRef, setCameraRef] = useState(null);
-  const [location, setLocation] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
-
-  function toggleCameraType() {
-    setType((current) =>
-      current === CameraType.back ? CameraType.front : CameraType.back
-    );
-  }
-
-  const takePhoto = async () => {
-    if (cameraRef) {
-      const { uri } = await cameraRef.takePictureAsync();
-      const photo = await MediaLibrary.createAssetAsync(uri);
-      const latitude = location.coords.latitude;
-      const longitude = location.coords.longitude;
-
-      navigation.navigate("Feed", {
-        photo: photo.uri,
-        coords: { latitude, longitude },
-      });
-    }
-  };
-
-  if (!permission) {
-    // Camera permissions are still loading
-    return <View />;
-  }
-
-  if (!permission.granted) {
-    // Camera permissions are not granted yet
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>
-          We need your permission to show the camera
-        </Text>
-        <TouchableOpacity
-          onPress={requestPermission}
-          style={styles.permissionBtn}
-        >
-          <Text style={styles.permissionBtnTitle}>Надати доступ</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
+export default function PostsScreen() {
   return (
-    <View style={styles.container}>
-      <Camera
-        style={styles.camera}
-        type={type}
-        ref={(ref) => {
-          setCameraRef(ref);
-        }}
-      >
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.btn} onPress={toggleCameraType}>
-            <MaterialCommunityIcons
-              name="camera-flip-outline"
-              size={35}
-              color="#fff"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              ...styles.btn,
-              alignSelf: "flex-end",
-              marginLeft: -50,
-            }}
-            onPress={takePhoto}
-          >
-            <View style={styles.takePhotoOut}>
-              <View style={styles.takePhotoInner}></View>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </Camera>
-    </View>
+    <CreateStack.Navigator>
+      <CreateStack.Screen
+        name="Camera"
+        component={CameraScreen}
+        options={{ headerShown: false }}
+      />
+      <CreateStack.Screen
+        name="Create Post"
+        component={CreatePostScreen}
+        options={{ headerShown: false }}
+      />
+    </CreateStack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  camera: {
-    flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    margin: 15,
-  },
-  btn: {
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "flex-start",
-  },
-  permissionBtn: {
-    height: 44,
-    padding: 10,
-
-    marginHorizontal: 50,
-    alignItems: "center",
-
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#63D471",
-    borderRadius: 25,
-  },
-
-  permissionBtnTitle: {
-    fontFamily: "Lora-Regular",
-    color: "#fff",
-    fontSize: 18,
-  },
-
-  title: {
-    alignItems: "center",
-    marginBottom: 33,
-    marginTop: 33,
-    color: "4E7D55",
-  },
-
-  takePhotoOut: {
-    borderWidth: 2,
-    borderColor: "white",
-    height: 50,
-    width: 50,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 50,
-  },
-
-  takePhotoInner: {
-    borderWidth: 2,
-    borderColor: "white",
-    height: 40,
-    width: 40,
-    backgroundColor: "white",
-    borderRadius: 50,
-  },
-});

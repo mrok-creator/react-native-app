@@ -1,4 +1,6 @@
 import React, { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
+
 import {
   StyleSheet,
   View,
@@ -13,16 +15,20 @@ import {
   Text,
 } from "react-native";
 
+import { signIn } from "../../redux/auth/auth-operation";
+
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function SignInScreen() {
+export default function SignInScreen({ navigation }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
   const [isKeyboardShow, setIsKeyboardShow] = useState(false);
+
+  const dispatch = useDispatch();
 
   const [fontsLoaded] = useFonts({
     "Lora-Regular": require("../../assets/font/Lora-Regular.ttf"),
@@ -49,10 +55,10 @@ export default function SignInScreen() {
         email: name,
         password,
       };
-      Alert.alert("Credentials", `${name}  ${password}`);
+      dispatch(signIn(newData));
       setName("");
       setPassword("");
-      console.log(newData);
+
       setIsKeyboardShow(false);
       return;
     }
@@ -92,7 +98,7 @@ export default function SignInScreen() {
             <View
               style={{
                 ...styles.form,
-                paddingBottom: isKeyboardShow ? 30 : 70,
+                paddingBottom: isKeyboardShow ? 150 : 70,
               }}
             >
               <View style={styles.headerTitle}>
@@ -101,7 +107,7 @@ export default function SignInScreen() {
               <TextInput
                 value={name}
                 onChangeText={nameHandler}
-                placeholder="Username"
+                placeholder="Email"
                 style={styles.input}
                 keyboardAppearance={"dark"}
                 placeholderTextColor={"#4E7D55"}
@@ -127,7 +133,26 @@ export default function SignInScreen() {
               >
                 <Text style={styles.btnTitle}>Увійти</Text>
               </TouchableOpacity>
-              {/* <Link to="/profile">Завітав вперше? Створи власну історію</Link> */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Register")}
+                style={{
+                  marginTop: 12,
+                  alignSelf: "center",
+                }}
+              >
+                <Text style={{ color: "#fff", fontFamily: "Lora-Regular" }}>
+                  Вперше в нас?
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#63D471",
+                      fontFamily: "Lora-Bold",
+                    }}
+                  >
+                    {"  "}Зареєструйся
+                  </Text>
+                </Text>
+              </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -146,8 +171,6 @@ const styles = StyleSheet.create({
   img: {
     flex: 1,
     justifyContent: "flex-end",
-
-    // resizeMode: "cover",
   },
 
   form: {
