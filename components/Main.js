@@ -6,7 +6,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { selectNavigation } from "../helpers/selectNavigation";
 
 import useLogin from "../helpers/hooks/useIsLogin";
-import { setUser } from "../redux/auth/auth-slice";
+import { setUser, setStatus } from "../redux/auth/auth-slice";
 
 const auth = getAuth();
 
@@ -24,9 +24,7 @@ const Main = () => {
 
           dispatch(setUser(data));
         } else {
-          const data = { isLogin: false };
-
-          dispatch(setUser(data));
+          dispatch(setStatus(false));
         }
       });
     };

@@ -1,4 +1,4 @@
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./config";
 
@@ -11,8 +11,10 @@ const uploadFile = async (reference, name, file) => {
   const storageRef = ref(storage, reference + `${name}-${objectId()}`);
 
   // ! upload photo to firebase storage
-  const data = await uploadBytes(storageRef, file);
-  return data;
+  await uploadBytes(storageRef, file);
+
+  const imgRef = await getDownloadURL(storageRef);
+  return imgRef;
 };
 
 export default uploadFile;

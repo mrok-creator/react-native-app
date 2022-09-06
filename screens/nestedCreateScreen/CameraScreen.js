@@ -7,21 +7,14 @@ import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-// * firebase
-// import { getStorage, ref, uploadBytes } from "firebase/storage";
-// import { initializeApp } from "firebase/app";
-// import { firebaseConfig } from "../../helpers/firebase/config";
-
 import useUserId from "../../helpers/hooks/useUserId";
 import uploadFile from "../../helpers/firebase/storage";
-
-// * Initialize Firebase
 
 export default function CreateScreen({ navigation }) {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [cameraRef, setCameraRef] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [coordinate, setCoords] = useState(null);
 
   const uid = useUserId();
 
@@ -34,7 +27,7 @@ export default function CreateScreen({ navigation }) {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      setCoords(location);
     })();
   }, []);
 
@@ -44,31 +37,36 @@ export default function CreateScreen({ navigation }) {
     );
   }
 
+  const uploadPhoto = async () => {
+    const { uri } = await cameraRef.takePictureAsync();
+    const photo = await MediaLibrary.createAssetAsync(uri);
+    // const latitude = location.coords.latitude;
+    // const longitude = location.coords.longitude;
+
+    //! do BLOB photo
+    const img = await fetch(photo.uri);
+    const file = await img.blob();
+
+    // * upload photo to firebase storage
+    // ? uploadFile = async (reference, name, file)
+    const ref = "images/";
+    const imgRef = await uploadFile(ref, uid, file);
+
+    return imgRef;
+  };
+
   const takePhoto = async () => {
-    if (cameraRef) {
-      const { uri } = await cameraRef.takePictureAsync();
-      //   const photo = await MediaLibrary.createAssetAsync(uri)
-      // const latitude = location.coords.latitude;
-      // const longitude = location.coords.longitude;
+    const coords = await {
+      latitude: coordinate.coords.latitude,
+      longitude: coordinate.coords.longitude,
+    };
 
-      //* init firebase storage  uid
+    const imgRef = await uploadPhoto();
 
-      //! do BLOB photo
-      const img = await fetch(uri);
-      const file = await img.blob();
-
-      // * upload photo to firebase storage
-      // ? uploadFile = async (reference, name, file)
-      const ref = "images/";
-      const data = await uploadFile(ref, uid, file);
-
-      const imgRef = data.ref._location.path;
-
-      // todo navigation.navigate("Feed", {
-      //   photo: photo.uri,
-      //   coords: { latitude, longitude },
-      // });
-    }
+    navigation.navigate("Create Post", {
+      photo: imgRef,
+      coords,
+    });
   };
 
   if (!permission) {

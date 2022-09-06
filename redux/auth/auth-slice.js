@@ -22,6 +22,11 @@ const authSlice = createSlice({
         ...payload,
       },
     }),
+    setStatus: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      isLogin: payload,
+    }),
   },
   extraReducers: {
     //* реєстрація нового юзера
@@ -80,6 +85,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser } = authSlice.actions;
+export const { setUser, setStatus } = authSlice.actions;
 
 export default authSlice.reducer;

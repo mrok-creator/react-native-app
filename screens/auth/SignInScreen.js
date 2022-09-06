@@ -98,7 +98,6 @@ export default function SignInScreen({ navigation }) {
             <View
               style={{
                 ...styles.form,
-                paddingBottom: isKeyboardShow ? 150 : 70,
               }}
             >
               <View style={styles.headerTitle}>
@@ -108,6 +107,7 @@ export default function SignInScreen({ navigation }) {
                 value={name}
                 onChangeText={nameHandler}
                 placeholder="Email"
+                textContentType="emailAddress"
                 style={styles.input}
                 keyboardAppearance={"dark"}
                 placeholderTextColor={"#4E7D55"}
@@ -118,6 +118,7 @@ export default function SignInScreen({ navigation }) {
                 value={password}
                 onChangeText={passwordHandler}
                 placeholder="Password"
+                textContentType="password"
                 secureTextEntry={true}
                 style={styles.input}
                 keyboardAppearance={"dark"}
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
 
   form: {
     backgroundColor: "#0F4F49",
-    // paddingBottom: 32,
+    paddingBottom: 32,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
   },

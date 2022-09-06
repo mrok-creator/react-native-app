@@ -8,6 +8,7 @@ export const signUp = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const { email, photoURL, uid, displayName } = await db.register(data);
+
       //   Notify.success(
       //     " You will receive an email in a few minutes, please verify your email to continue."
       //   );

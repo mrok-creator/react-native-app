@@ -58,7 +58,7 @@ export default function SignUpScreen({ navigation }) {
       password.trim().length > 0
     ) {
       const newData = {
-        userName: name,
+        nickName: name,
         email,
         password,
       };
@@ -108,7 +108,6 @@ export default function SignUpScreen({ navigation }) {
             <View
               style={{
                 ...styles.form,
-                paddingBottom: isKeyboardShow ? 150 : 70,
               }}
             >
               <View style={styles.headerTitle}>
@@ -118,6 +117,7 @@ export default function SignUpScreen({ navigation }) {
                 value={name}
                 onChangeText={nameHandler}
                 placeholder="Username"
+                textContentType="nickname"
                 style={styles.input}
                 keyboardAppearance={"dark"}
                 placeholderTextColor={"#4E7D55"}
@@ -126,8 +126,9 @@ export default function SignUpScreen({ navigation }) {
 
               <TextInput
                 value={email}
-                onChangeText={emailHandler}
                 placeholder="Email"
+                textContentType="emailAddress"
+                onChangeText={emailHandler}
                 style={styles.input}
                 keyboardAppearance={"dark"}
                 placeholderTextColor={"#4E7D55"}
@@ -138,6 +139,7 @@ export default function SignUpScreen({ navigation }) {
                 value={password}
                 onChangeText={passwordHandler}
                 placeholder="Password"
+                textContentType="password"
                 secureTextEntry={true}
                 style={styles.input}
                 keyboardAppearance={"dark"}
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
 
   form: {
     backgroundColor: "#0F4F49",
-
+    paddingBottom: 32,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
   },

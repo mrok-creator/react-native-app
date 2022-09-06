@@ -18,6 +18,7 @@ export const register = async ({ nickName, email, password }) => {
   await createUserWithEmailAndPassword(auth, email, password);
 
   // update profile
+
   await updateProfile(auth.currentUser, {
     displayName: nickName,
     photoURL:
@@ -33,7 +34,7 @@ export const register = async ({ nickName, email, password }) => {
 
 export const logIn = async ({ email, password }) => {
   const { user } = await signInWithEmailAndPassword(auth, email, password);
-  
+
   return user;
 };
 

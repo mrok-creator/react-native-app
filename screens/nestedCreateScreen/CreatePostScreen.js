@@ -18,19 +18,67 @@ import {
 // import icons font
 import { MaterialIcons } from "@expo/vector-icons";
 
+import { addToCollection } from "../../helpers/firebase/fireStore";
 import useId from "../../helpers/hooks/useUserId";
+import useName from "../../helpers/hooks/useName";
 
 export default function CreatePostScreen({ route, navigation }) {
   const [title, setTitle] = useState("");
+  const [locTitle, setLocTitle] = useState("");
   const [isKeyboardShow, setIsKeyboardShow] = useState(false);
 
   const uid = useId();
+  const displayName = useName();
+  const { photo, coords } = route.params;
 
   const titleHandler = (text) => setTitle(text);
+  const locationHandler = (text) => setLocTitle(text);
 
-  const onSubmit = () => {
+  const uploadPost = async () => {
     //  ! do post logick
-    console.log("Dorobu ce sYkiya");
+    // ? addToCollection = async (collectionName, collectionData)
+    const collection = "posts";
+    const post = {
+      owner: uid,
+      ownerName: displayName,
+      photo,
+      coords,
+      title,
+      locationTitle: locTitle,
+    };
+
+    const strPost = JSON.stringify(post);
+
+    console.log("collectionData -----create post screen --->", strPost);
+
+    return (response = await addToCollection(collection, post));
+  };
+
+  const onSubmit = async () => {
+    if (title.trim().length === 0) {
+      return Alert.alert(
+        "Ви впевнені?",
+        "Ви точно хочете залишити підпис порожнім?",
+        [
+          {
+            text: "OK",
+            onPress: async () => {
+              const res = await uploadPost();
+              navigation.navigate("Feed", res);
+              return;
+            },
+          },
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+        ]
+      );
+    }
+
+    const res = await uploadPost();
+    navigation.navigate("Feed", res);
   };
 
   return (
@@ -52,7 +100,8 @@ export default function CreatePostScreen({ route, navigation }) {
             <View style={styles.item}>
               <ImageBackground
                 style={styles.img}
-                source={require("../../assets/images/bg-art.jpg")}
+                // source={require("../../assets/images/bg-art.jpg")}
+                source={{ uri: photo }}
                 //   ! need change img uri
               ></ImageBackground>
             </View>
@@ -71,19 +120,40 @@ export default function CreatePostScreen({ route, navigation }) {
                 placeholderTextColor={"#63D471"}
                 onFocus={() => setIsKeyboardShow(true)}
               />
+              <TextInput
+                value={locTitle}
+                onChangeText={locationHandler}
+                placeholder="Локація"
+                style={styles.input}
+                keyboardAppearance={"dark"}
+                placeholderTextColor={"#63D471"}
+                onFocus={() => setIsKeyboardShow(true)}
+              />
               <View style={styles.btnWrapper}>
                 <TouchableOpacity
-                  style={{ ...styles.btn, left: 100, bottom: 30, width: 250 }}
-                  onPress={onSubmit}
-                  activeOpacity={0.7}
-                >
-                  <Text style={styles.btnTitle}>Створити пост</Text>
-                </TouchableOpacity>
-                {/* <Link to="/profile">Реєструвався? заходь і насолоджуйся)</Link> */}
-                <TouchableOpacity
                   onPress={() => navigation.navigate("Camera")}
-                  style={{ ...styles.btn, left: 20, bottom: 30, width: 60 }}
+                  style={{
+                    ...styles.btn,
+                    left: 20,
+
+                    width: 60,
+                  }}
                 >
+                  <TouchableOpacity
+                    style={{ ...styles.btn, left: 100, width: 250 }}
+                    onPress={onSubmit}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={{
+                        ...styles.btnTitle,
+                      }}
+                    >
+                      Створити пост
+                    </Text>
+                  </TouchableOpacity>
+                  {/* <Link to="/profile">Реєструвався? заходь і насолоджуйся)</Link> */}
+
                   <MaterialIcons
                     name="monochrome-photos"
                     size={30}
@@ -133,9 +203,6 @@ const styles = StyleSheet.create({
 
   form: {
     backgroundColor: "transparent",
-
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
   },
 
   input: {
@@ -143,7 +210,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     fontSize: 18,
 
-    height: 60,
+    height: 40,
     paddingLeft: 20,
 
     borderWidth: 1,
@@ -151,12 +218,12 @@ const styles = StyleSheet.create({
 
     borderRadius: 15,
     color: "#fff",
-    marginBottom: 50,
+    marginBottom: 20,
   },
 
   btnWrapper: {
     position: "relative",
-    paddingBottom: 50,
+    height: 50,
   },
 
   btn: {

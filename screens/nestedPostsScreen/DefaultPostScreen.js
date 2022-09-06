@@ -10,56 +10,90 @@ import {
   StatusBar,
 } from "react-native";
 
+//*init firebase collection
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  query,
+  onSnapshot,
+} from "firebase/firestore";
+
 // import icons
 import { FontAwesome5 } from "@expo/vector-icons";
 
-export default function DefaultPostScreen({ route, navigation }) {
-  // console.log("post params", route.params);
+import { firebaseConfig } from "../../helpers/firebase/config";
+import useUserId from "../../helpers/hooks/useUserId";
 
-  const [photo, setPhoto] = useState([]);
+export default function DefaultPostScreen({ navigation }) {
+  const [posts, setPosts] = useState([]);
+
+  const uid = useUserId();
+
+  const subscribeForUpdate = async () => {
+    const app = initializeApp(firebaseConfig);
+    const fbStore = getFirestore(app);
+
+    const q = query(collection(fbStore, "posts"));
+    const unsubscribe = onSnapshot(q, (data) => {
+      data.forEach((doc) => {
+        setPosts((prevPosts) => {
+          const newPost = { ...doc.data(), id: doc.id };
+          return [...prevPosts, newPost];
+        });
+      });
+    });
+  };
 
   useEffect(() => {
-    if (!route.params) {
-      return;
-    }
-
-    setPhoto((prevState) => [route.params, ...prevState]);
-  }, [route.params]);
+    subscribeForUpdate();
+  }, []);
 
   //? return markup  for one post card
-  const renderPostItem = ({ photo, coords }) => (
-    <View style={styles.item}>
-      <Image style={styles.img} source={{ uri: photo }} />
-      <View style={styles.btnWrapper}>
-        <TouchableOpacity
-          style={{ ...styles.btn, left: 0 }}
-          onPress={() => {
-            navigation.navigate("Map", { coords });
-          }}
-          activeOpacity={0.7}
-        >
-          <FontAwesome5 name="map-marker-alt" size={30} color="#4E7D55" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ ...styles.btn, left: 50 }}
-          onPress={() => {
-            navigation.navigate("Comments");
-          }}
-          activeOpacity={0.7}
-        >
-          <FontAwesome5 name="comment" size={30} color="#4E7D55" />
-        </TouchableOpacity>
+  const renderPostItem = (post) => {
+    const { owner, photo, coords, title, locationTitle } = post;
+    const stl = uid !== owner ? styles.item : styles.myItem;
+    return (
+      <View style={stl}>
+        <Image style={styles.img} source={{ uri: photo }} />
+        <View style={styles.btnWrapper}>
+          <Text style={styles.title}>{title}</Text>
+          <TouchableOpacity
+            style={{ ...styles.btn, left: 20, bottom: 10 }}
+            onPress={() => {
+              navigation.navigate("Comments");
+            }}
+            activeOpacity={0.7}
+          >
+            <FontAwesome5 name="comment" size={30} color="#63D471" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ ...styles.btn, left: 120, bottom: 10 }}
+            onPress={() => {
+              navigation.navigate("Map", { coords, locationTitle });
+            }}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.locationText}>
+              <FontAwesome5 name="map-marker-alt" size={30} color="#63D471" />
+              {"  "} {locationTitle}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
+
+  // todo  const { id, owner, photo, coords, title, locationTitle } = post;
+  //! posts;
 
   return (
     <>
       <SafeAreaView style={styles.container}>
         <FlatList
-          data={photo}
+          data={posts}
           renderItem={({ item }) => renderPostItem(item)}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => item.id}
         />
       </SafeAreaView>
     </>
@@ -76,31 +110,49 @@ const styles = StyleSheet.create({
   btnWrapper: {
     position: "relative",
     justifyContent: "flex-start",
+    height: 80,
   },
 
   btn: {
-    padding: 15,
-
     position: "absolute",
     justifyContent: "center",
     alignItems: "center",
   },
+  myItem: {
+    width: 340,
+    backgroundColor: "#0F4F49",
+    marginRight: 10,
+    marginLeft: "auto",
+    marginBottom: 25,
+
+    borderRadius: 10,
+  },
 
   item: {
+    width: 340,
     backgroundColor: "#4E7D55",
 
-    marginVertical: 30,
-    marginHorizontal: 16,
+    marginRight: "auto",
+    marginLeft: 10,
+    marginBottom: 25,
 
     borderRadius: 10,
   },
   title: {
-    color: "#252d25",
-    fontSize: 30,
+    marginTop: 8,
+    marginLeft: 25,
+    fontFamily: "Lora-Medium",
+    color: "#fff",
+    fontSize: 20,
   },
   img: {
     borderRadius: 10,
     height: 350,
     resizeMode: "cover",
+  },
+  locationText: {
+    fontFamily: "Lora-Regular",
+    color: "#fff",
+    fontSize: 16,
   },
 });
