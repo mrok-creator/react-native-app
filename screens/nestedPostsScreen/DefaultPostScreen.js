@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  ImageBackground,
 } from "react-native";
 
 //*init firebase collection
@@ -24,11 +25,13 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 import { firebaseConfig } from "../../helpers/firebase/config";
 import useUserId from "../../helpers/hooks/useUserId";
+import useDisplayName from "../../helpers/hooks/useName";
 
 export default function DefaultPostScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
 
   const uid = useUserId();
+  const nickName = useDisplayName();
 
   const subscribeForUpdate = async () => {
     const app = initializeApp(firebaseConfig);
@@ -36,6 +39,7 @@ export default function DefaultPostScreen({ navigation }) {
 
     const q = query(collection(fbStore, "posts"));
     const unsubscribe = onSnapshot(q, (data) => {
+      setPosts([]);
       data.forEach((doc) => {
         setPosts((prevPosts) => {
           const newPost = { ...doc.data(), id: doc.id };
@@ -51,7 +55,7 @@ export default function DefaultPostScreen({ navigation }) {
 
   //? return markup  for one post card
   const renderPostItem = (post) => {
-    const { owner, photo, coords, title, locationTitle } = post;
+    const { id, owner, photo, coords, title, locationTitle, ownerName } = post;
     const stl = uid !== owner ? styles.item : styles.myItem;
     return (
       <View style={stl}>
@@ -61,7 +65,7 @@ export default function DefaultPostScreen({ navigation }) {
           <TouchableOpacity
             style={{ ...styles.btn, left: 20, bottom: 10 }}
             onPress={() => {
-              navigation.navigate("Comments");
+              navigation.navigate("Comments", { id, photo, uid, nickName });
             }}
             activeOpacity={0.7}
           >
@@ -90,11 +94,18 @@ export default function DefaultPostScreen({ navigation }) {
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <FlatList
-          data={posts}
-          renderItem={({ item }) => renderPostItem(item)}
-          keyExtractor={(item) => item.id}
-        />
+        {/* bg-default.jpg */}
+        <ImageBackground
+          source={require("../../assets/images/bg-default.jpg")}
+          style={styles.imgBg}
+          resizeMode={"cover"}
+        >
+          <FlatList
+            data={posts}
+            renderItem={({ item }) => renderPostItem(item)}
+            keyExtractor={(item) => item.id}
+          />
+        </ImageBackground>
       </SafeAreaView>
     </>
   );
@@ -103,8 +114,13 @@ export default function DefaultPostScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+
     marginTop: StatusBar.currentHeight || 0, //! test that
+  },
+
+  imgBg: {
+    flex: 1,
+    justifyContent: "center",
   },
 
   btnWrapper: {

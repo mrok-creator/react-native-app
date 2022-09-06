@@ -47,10 +47,6 @@ export default function CreatePostScreen({ route, navigation }) {
       locationTitle: locTitle,
     };
 
-    const strPost = JSON.stringify(post);
-
-    console.log("collectionData -----create post screen --->", strPost);
-
     return (response = await addToCollection(collection, post));
   };
 
@@ -63,8 +59,8 @@ export default function CreatePostScreen({ route, navigation }) {
           {
             text: "OK",
             onPress: async () => {
-              const res = await uploadPost();
-              navigation.navigate("Feed", res);
+              await uploadPost();
+              navigation.navigate("Feed");
               return;
             },
           },
@@ -77,8 +73,8 @@ export default function CreatePostScreen({ route, navigation }) {
       );
     }
 
-    const res = await uploadPost();
-    navigation.navigate("Feed", res);
+    await uploadPost();
+    navigation.navigate("Feed");
   };
 
   return (
@@ -152,7 +148,6 @@ export default function CreatePostScreen({ route, navigation }) {
                       Створити пост
                     </Text>
                   </TouchableOpacity>
-                  {/* <Link to="/profile">Реєструвався? заходь і насолоджуйся)</Link> */}
 
                   <MaterialIcons
                     name="monochrome-photos"

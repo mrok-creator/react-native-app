@@ -102,13 +102,13 @@ export default function SignUpScreen({ navigation }) {
           style={styles.img}
           resizeMode={"cover"}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+          <View
+            style={{
+              ...styles.form,
+            }}
           >
-            <View
-              style={{
-                ...styles.form,
-              }}
+            <KeyboardAvoidingView
+              behavior={Platform.OS == "ios" ? "padding" : "height"}
             >
               <View style={styles.headerTitle}>
                 <Text style={styles.headerText}>Реєстрація</Text>
@@ -176,8 +176,8 @@ export default function SignUpScreen({ navigation }) {
                   </Text>
                 </Text>
               </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+          </View>
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>

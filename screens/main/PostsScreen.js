@@ -11,7 +11,11 @@ const PostsStack = createStackNavigator();
 export default function PostsScreen() {
   return (
     <PostsStack.Navigator>
-      <PostsStack.Screen name="Feed" component={DefaultPostScreen} />
+      <PostsStack.Screen
+        name="Feed"
+        component={DefaultPostScreen}
+        options={{ headerShown: false }}
+      />
       <PostsStack.Screen name="Comments" component={CommentsScreen} />
       <PostsStack.Screen name="Map" component={MapScreen} />
     </PostsStack.Navigator>

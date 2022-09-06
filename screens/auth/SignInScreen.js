@@ -92,13 +92,13 @@ export default function SignInScreen({ navigation }) {
           style={styles.img}
           resizeMode={"cover"}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+          <View
+            style={{
+              ...styles.form,
+            }}
           >
-            <View
-              style={{
-                ...styles.form,
-              }}
+            <KeyboardAvoidingView
+              behavior={Platform.OS == "ios" ? "padding" : "height"}
             >
               <View style={styles.headerTitle}>
                 <Text style={styles.headerText}>Увійти до профілю</Text>
@@ -154,8 +154,8 @@ export default function SignInScreen({ navigation }) {
                   </Text>
                 </Text>
               </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+          </View>
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 // import { useSelector, shallowEqual } from "react-redux";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ImageBackground,
+  Dimensions,
+} from "react-native";
 import { Camera, CameraType } from "expo-camera";
 
 import * as MediaLibrary from "expo-media-library";
@@ -30,6 +37,40 @@ export default function CreateScreen({ navigation }) {
       setCoords(location);
     })();
   }, []);
+
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View
+        style={{
+          ...styles.permissionContainer,
+          width: Dimensions.get("window").width,
+          height: Dimensions.get("window").height,
+        }}
+      >
+        <ImageBackground
+          source={require("../../assets/images/permission-bg.jpg")}
+          style={styles.imgBgPermission}
+          resizeMode={"cover"}
+        >
+          <TouchableOpacity
+            onPress={requestPermission}
+            style={styles.permissionBtn}
+          >
+            <Text style={styles.permissionBtnTitle}>Надати доступ</Text>
+          </TouchableOpacity>
+          <Text style={styles.titlePermission}>
+            Необхідний дозвіл для використання камери
+          </Text>
+        </ImageBackground>
+      </View>
+    );
+  }
 
   function toggleCameraType() {
     setType((current) =>
@@ -68,28 +109,6 @@ export default function CreateScreen({ navigation }) {
       coords,
     });
   };
-
-  if (!permission) {
-    // Camera permissions are still loading
-    return <View />;
-  }
-
-  if (!permission.granted) {
-    // Camera permissions are not granted yet
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>
-          We need your permission to show the camera
-        </Text>
-        <TouchableOpacity
-          onPress={requestPermission}
-          style={styles.permissionBtn}
-        >
-          <Text style={styles.permissionBtnTitle}>Надати доступ</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -145,31 +164,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "flex-start",
   },
-  permissionBtn: {
-    height: 44,
-    padding: 10,
-
-    marginHorizontal: 50,
-    alignItems: "center",
-
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#63D471",
-    borderRadius: 25,
-  },
-
-  permissionBtnTitle: {
-    fontFamily: "Lora-Regular",
-    color: "#fff",
-    fontSize: 18,
-  },
-
-  title: {
-    alignItems: "center",
-    marginBottom: 33,
-    marginTop: 33,
-    color: "4E7D55",
-  },
 
   takePhotoOut: {
     borderWidth: 2,
@@ -190,4 +184,67 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 50,
   },
+
+  //*permission styles
+  permissionContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+
+  imgBgPermission: {
+    position: "relative",
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+
+  titlePermission: {
+    marginBottom: 15,
+    marginHorizontal: 8,
+    textAlign: "center",
+    alignItems: "center",
+
+    fontFamily: "Lora-Medium",
+    fontSize: 22,
+    color: "#63D471",
+    backgroundColor: "#0F4F49",
+
+    borderWidth: 3,
+    borderColor: "#63D471",
+    borderRadius: 25,
+  },
+
+  permissionBtn: {
+    height: 44,
+    marginHorizontal: 50,
+
+    marginBottom: 25,
+    alignItems: "center",
+    backgroundColor: "#0F4F49",
+    borderWidth: 1,
+    borderColor: "#63D471",
+    borderRadius: 25,
+  },
+
+  permissionBtnTitle: {
+    fontFamily: "Lora-Medium",
+    color: "#63D471",
+    fontSize: 20,
+  },
 });
+
+// todo  <View style={styles.permissionContainer}>
+// todo        <ImageBackground style={styles.imgBgPermission}>
+
+//  todo         <Text style={styles.titlePermission}>
+//  todo           We need your permission to show the camera
+//  todo         </Text>
+//  todo         <TouchableOpacity
+//  todo
+//  todo           style={styles.permissionBtn}
+//  todo         >
+//  todo           <Text style={styles.permissionBtnTitle}>Надати доступ</Text>
+//  todo         </TouchableOpacity>
+// todo        </ImageBackground>
+// todo      </View>
+// todo    );
+// todo  }
