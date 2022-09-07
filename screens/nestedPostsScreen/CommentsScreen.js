@@ -160,7 +160,7 @@ export default function CommentsScreen({ route }) {
               />
 
               <TouchableOpacity
-                style={{ ...styles.btn }}
+                style={styles.btn}
                 onPress={sendComent}
                 activeOpacity={0.7}
               >
@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
     position: "relative",
     flex: 1,
     justifyContent: "flex-end",
+    paddingVertical: 10,
   },
   // *post img
   post: {
@@ -315,10 +316,5 @@ const styles = StyleSheet.create({
     position: "relative",
     justifyContent: "flex-start",
     height: 80,
-  },
-
-  btn: {
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

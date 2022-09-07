@@ -19,7 +19,8 @@ import uploadFile from "../../helpers/firebase/storage";
 
 export default function CreateScreen({ navigation }) {
   const [type, setType] = useState(CameraType.back);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [permission, requestCameraPermission] = Camera.useCameraPermissions();
+  const [statusMedia, requestLibraryPermission] = MediaLibrary.usePermissions();
   const [cameraRef, setCameraRef] = useState(null);
   const [coordinate, setCoords] = useState(null);
 
@@ -38,12 +39,12 @@ export default function CreateScreen({ navigation }) {
     })();
   }, []);
 
-  if (!permission) {
+  if (!permission || !statusMedia) {
     // Camera permissions are still loading
     return <View />;
   }
 
-  if (!permission.granted) {
+  if (!permission.granted || !statusMedia.granted) {
     // Camera permissions are not granted yet
     return (
       <View
@@ -58,15 +59,18 @@ export default function CreateScreen({ navigation }) {
           style={styles.imgBgPermission}
           resizeMode={"cover"}
         >
+          <Text style={styles.titlePermission}>
+            Необхідний дозвіл для використання камери
+          </Text>
           <TouchableOpacity
-            onPress={requestPermission}
+            onPress={() => {
+              requestCameraPermission();
+              requestLibraryPermission();
+            }}
             style={styles.permissionBtn}
           >
             <Text style={styles.permissionBtnTitle}>Надати доступ</Text>
           </TouchableOpacity>
-          <Text style={styles.titlePermission}>
-            Необхідний дозвіл для використання камери
-          </Text>
         </ImageBackground>
       </View>
     );
@@ -80,12 +84,12 @@ export default function CreateScreen({ navigation }) {
 
   const uploadPhoto = async () => {
     const { uri } = await cameraRef.takePictureAsync();
-    const photo = await MediaLibrary.createAssetAsync(uri);
+    await MediaLibrary.createAssetAsync(uri);
     // const latitude = location.coords.latitude;
     // const longitude = location.coords.longitude;
 
     //! do BLOB photo
-    const img = await fetch(photo.uri);
+    const img = await fetch(uri);
     const file = await img.blob();
 
     // * upload photo to firebase storage
@@ -97,10 +101,8 @@ export default function CreateScreen({ navigation }) {
   };
 
   const takePhoto = async () => {
-    const coords = await {
-      latitude: coordinate.coords.latitude,
-      longitude: coordinate.coords.longitude,
-    };
+    const { coords } = await Location.getCurrentPositionAsync({ accuracy: 1 });
+    console.log("================>", coords);
 
     const imgRef = await uploadPhoto();
 
@@ -198,8 +200,9 @@ const styles = StyleSheet.create({
   },
 
   titlePermission: {
-    marginBottom: 15,
+    marginBottom: 25,
     marginHorizontal: 8,
+    padding: 10,
     textAlign: "center",
     alignItems: "center",
 
@@ -208,9 +211,9 @@ const styles = StyleSheet.create({
     color: "#63D471",
     backgroundColor: "#0F4F49",
 
-    borderWidth: 3,
-    borderColor: "#63D471",
-    borderRadius: 25,
+    // borderWidth: 3,
+    // borderColor: "#63D471",
+    // borderRadius: 25,
   },
 
   permissionBtn: {
@@ -231,20 +234,3 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
-
-// todo  <View style={styles.permissionContainer}>
-// todo        <ImageBackground style={styles.imgBgPermission}>
-
-//  todo         <Text style={styles.titlePermission}>
-//  todo           We need your permission to show the camera
-//  todo         </Text>
-//  todo         <TouchableOpacity
-//  todo
-//  todo           style={styles.permissionBtn}
-//  todo         >
-//  todo           <Text style={styles.permissionBtnTitle}>Надати доступ</Text>
-//  todo         </TouchableOpacity>
-// todo        </ImageBackground>
-// todo      </View>
-// todo    );
-// todo  }

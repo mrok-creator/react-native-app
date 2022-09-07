@@ -90,21 +90,28 @@ export default function CreatePostScreen({ route, navigation }) {
           style={styles.imgBg}
           resizeMode={"cover"}
         >
+          <View style={styles.item}>
+            <ImageBackground
+              style={styles.img}
+              // source={require("../../assets/images/bg-art.jpg")}
+              source={{ uri: photo }}
+              //   ! need change img uri
+            ></ImageBackground>
+          </View>
           <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
           >
-            <View style={styles.item}>
-              <ImageBackground
-                style={styles.img}
-                // source={require("../../assets/images/bg-art.jpg")}
-                source={{ uri: photo }}
-                //   ! need change img uri
-              ></ImageBackground>
-            </View>
             <View
               style={{
                 ...styles.form,
-                paddingBottom: isKeyboardShow ? 60 : 30,
+                ...Platform.select({
+                  ios: {
+                    paddingBottom: isKeyboardShow ? 140 : 32,
+                  },
+                  android: {
+                    paddingBottom: 32,
+                  },
+                }),
               }}
             >
               <TextInput
@@ -114,7 +121,11 @@ export default function CreatePostScreen({ route, navigation }) {
                 style={styles.input}
                 keyboardAppearance={"dark"}
                 placeholderTextColor={"#63D471"}
-                onFocus={() => setIsKeyboardShow(true)}
+                onFocus={() => {
+                  if (!isKeyboardShow) {
+                    setIsKeyboardShow(true);
+                  }
+                }}
               />
               <TextInput
                 value={locTitle}
@@ -123,7 +134,9 @@ export default function CreatePostScreen({ route, navigation }) {
                 style={styles.input}
                 keyboardAppearance={"dark"}
                 placeholderTextColor={"#63D471"}
-                onFocus={() => setIsKeyboardShow(true)}
+                onFocus={() => {
+                  if (!isKeyboardShow) setIsKeyboardShow(true);
+                }}
               />
               <View style={styles.btnWrapper}>
                 <TouchableOpacity
@@ -136,7 +149,7 @@ export default function CreatePostScreen({ route, navigation }) {
                   }}
                 >
                   <TouchableOpacity
-                    style={{ ...styles.btn, left: 100, width: 250 }}
+                    style={{ ...styles.btn, left: 85, width: 250 }}
                     onPress={onSubmit}
                     activeOpacity={0.7}
                   >
@@ -201,9 +214,9 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    fontFamily: "Lora-Regular",
+    fontFamily: "Lora-Bold",
     marginHorizontal: 16,
-    fontSize: 18,
+    fontSize: 22,
 
     height: 40,
     paddingLeft: 20,
@@ -212,7 +225,7 @@ const styles = StyleSheet.create({
     borderColor: "#63D471",
 
     borderRadius: 15,
-    color: "#fff",
+    color: "#00aa00",
     marginBottom: 20,
   },
 
