@@ -4,8 +4,7 @@ import {
   collection,
   addDoc,
   doc,
-  updateDoc,
-  arrayUnion,
+  setDoc,
 } from "firebase/firestore";
 
 import { firebaseConfig } from "./config";
@@ -13,35 +12,23 @@ import { firebaseConfig } from "./config";
 const app = initializeApp(firebaseConfig);
 const fbStore = getFirestore(app);
 
-export const addToCollection = async (collectionName, collectionData) => {
+export const addToPostCollection = async (collectionData) => {
   try {
-    const docRef = await addDoc(
-      collection(fbStore, collectionName),
-      collectionData
-    );
+    const docRef = await addDoc(collection(fbStore, "posts"), collectionData);
 
-    console.log("Document written with ID: ", docRef.id);
     console.log("response from Firestore --->", docRef);
-    return docRef.id;
   } catch (e) {
     console.error("Error adding document: ", e);
   }
 };
 
-export const updateDocField = async (docId, data) => {
-  const docFieldRef = doc(fbStore, "posts", docId);
-
-  // Set the "capital" field of the city 'DC'
-  await updateDoc(docFieldRef, {
-    comments: arrayUnion(data),
-  });
+export const addCommentsCollection = async (docId, data) => {
+  try {
+    const postsDocRef = doc(fbStore, "posts", docId);
+    // const docRef = await addDoc(collection(doc(fbStore, "posts", docId)), data);
+    const ref = await addDoc(collection(postsDocRef, "comments"), data);
+    // setDoc(doc(db, "cities", "LA")
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
 };
-
-// import { doc, updateDoc } from "firebase/firestore";
-
-// const washingtonRef = doc(db, "cities", "DC");
-
-// // Atomically add a new region to the "regions" array field.
-// await updateDoc(washingtonRef, {
-//   comments: arrayUnion("greater_virginia"),
-// });

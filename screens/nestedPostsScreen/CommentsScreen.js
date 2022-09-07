@@ -18,12 +18,19 @@ import {
 
 //*init firebase collection
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, onSnapshot } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  query,
+  onSnapshot,
+  doc,
+  orderBy,
+} from "firebase/firestore";
 
 // import icons
 import { FontAwesome } from "@expo/vector-icons";
 
-import { updateDocField } from "../../helpers/firebase/fireStore";
+import { addCommentsCollection } from "../../helpers/firebase/fireStore";
 import { firebaseConfig } from "../../helpers/firebase/config";
 
 export default function CommentsScreen({ route }) {
@@ -39,10 +46,24 @@ export default function CommentsScreen({ route }) {
   const renderComments = async () => {
     const app = initializeApp(firebaseConfig);
     const fbStore = getFirestore(app);
-    // todo
-    const unsub = await onSnapshot(doc(fbStore, "posts", id), (doc) => {
-      const arr = doc.data().comments;
-      // if(!arr)
+
+    const docId = id;
+    const postsDocRef = doc(fbStore, "posts", docId);
+
+    const q = await query(
+      collection(postsDocRef, "comments"),
+      orderBy("createdAt", "desc")
+    );
+    //! const q = query(collection(fbStore, "posts"), orderBy("createdAt", "desc"));
+    setCommentsList([]);
+    const unsubscribe = onSnapshot(q, (data) => {
+      data.forEach((doc) => {
+        setCommentsList((prevComment) => {
+          const newComment = { ...doc.data(), id: doc.id };
+
+          return [newComment, ...prevComment];
+        });
+      });
     });
   };
 
@@ -52,83 +73,104 @@ export default function CommentsScreen({ route }) {
 
   const sendComent = async () => {
     if (comment.trim().length !== 0) {
+      const date = Date.now().toString();
+      console.log("COMMENTSSCREEN ----date----> ", new Date(Date.now()));
+
       const data = {
+        createdAt: date,
         authorName: nickName,
         authorId: uid,
         comment,
       };
-      await updateDocField(id, data);
+      await addCommentsCollection(id, data);
       setComment("");
+      setIsKeyboardShow(false);
     }
   };
 
+  //? return markup  for one comment item
+  const renderComment = (commentObj) => {
+    const { authorId, authorName, comment } = commentObj;
+    const isMineItem = uid === authorId;
+    const commentStyle = isMineItem
+      ? styles.ownCommentItem
+      : styles.commentItem;
+    const nameStyle = isMineItem ? styles.ownName : styles.name;
+    return (
+      <View style={commentStyle}>
+        <Text style={nameStyle}>{authorName}</Text>
+        <Text style={styles.commentText}> {comment}</Text>
+      </View>
+    );
+  };
+
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-        setIsKeyboardShow(false);
-      }}
-    >
-      <View style={styles.container}>
-        <ImageBackground
-          source={require("../../assets/images/bg-comments.jpg")}
-          style={styles.imgBg}
-          resizeMode={"cover"}
+    <View style={styles.container}>
+      <ImageBackground
+        source={require("../../assets/images/bg-comments.jpg")}
+        style={styles.imgBg}
+        resizeMode={"cover"}
+      >
+        {/* <View style={styles.post}>
+          <ImageBackground
+            style={styles.postImg}
+            source={{ uri: photo }}
+          ></ImageBackground>
+        </View> */}
+
+        <SafeAreaView style={styles.commentsList}>
+          <FlatList
+            data={commentsList}
+            renderItem={({ item }) => renderComment(item)}
+            keyExtractor={(item) => item.id}
+          />
+        </SafeAreaView>
+
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-          <View style={styles.post}>
-            <ImageBackground
-              style={styles.postImg}
-              source={{ uri: photo }}
-            ></ImageBackground>
-          </View>
+          <View
+            style={{
+              ...styles.form,
 
-          <SafeAreaView style={styles.commentsList}>
-            <FlatList
-              data={commentsList}
-              renderItem={({ item }) => renderComments(item)}
-              keyExtractor={(item, index) => index}
-            />
-          </SafeAreaView>
+              // paddingBottom: isKeyboardShow && Platform.OS == "ios" ? 120 : 0,
 
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+              ...Platform.select({
+                ios: {
+                  paddingBottom: isKeyboardShow ? 120 : 0,
+                },
+              }),
+            }}
           >
             <View
-              style={{
-                ...styles.form,
-                ...Platform.select({
-                  ios: {
-                    paddingBottom: isKeyboardShow ? 120 : 0,
-                  },
-                }),
-              }}
+              style={{ position: "relative", height: 60, marginBottom: 10 }}
             >
-              <View
-                style={{ position: "relative", height: 60, marginBottom: 10 }}
-              >
-                <TextInput
-                  value={comment}
-                  onChangeText={commentHandler}
-                  placeholder="Коментар"
-                  style={styles.input}
-                  keyboardAppearance={"dark"}
-                  placeholderTextColor={"#63D471"}
-                  onFocus={() => setIsKeyboardShow(true)}
-                />
+              <TextInput
+                value={comment}
+                onChangeText={commentHandler}
+                placeholder="Коментар"
+                style={styles.input}
+                keyboardAppearance={"dark"}
+                placeholderTextColor={"#63D471"}
+                onFocus={() => setIsKeyboardShow(true)}
+                onBlur={() => {
+                  Keyboard.dismiss();
+                  setIsKeyboardShow(false);
+                }}
+              />
 
-                <TouchableOpacity
-                  style={{ ...styles.btn }}
-                  onPress={sendComent}
-                  activeOpacity={0.7}
-                >
-                  <FontAwesome name="send" size={24} color="#63D471" />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={{ ...styles.btn }}
+                onPress={sendComent}
+                activeOpacity={0.7}
+              >
+                <FontAwesome name="send" size={24} color="#63D471" />
+              </TouchableOpacity>
             </View>
-          </KeyboardAvoidingView>
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+          </View>
+        </KeyboardAvoidingView>
+      </ImageBackground>
+    </View>
   );
 }
 
@@ -151,9 +193,9 @@ const styles = StyleSheet.create({
   post: {
     backgroundColor: "#4E7D55",
     height: 220,
-    marginTop: 10,
-
-    marginHorizontal: 12,
+    marginTop: 8,
+    marginBottom: 8,
+    marginHorizontal: 10,
 
     borderWidth: 1,
     borderColor: "#63D471",
@@ -171,18 +213,17 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     backgroundColor: "transparent",
+    paddingTop: 20,
   },
 
   commentItem: {
-    height: 60,
+    minHeight: 60,
+    minWidth: 140,
     marginBottom: 10,
     marginRight: "auto",
-    marginLeft: 10,
+    marginLeft: 15,
     paddingLeft: 20,
-
-    fontFamily: "Lora-Regular",
-    fontSize: 18,
-    color: "#fff",
+    paddingRight: 15,
 
     borderWidth: 1,
     borderColor: "#63D471",
@@ -190,19 +231,45 @@ const styles = StyleSheet.create({
   },
 
   ownCommentItem: {
-    height: 60,
+    minHeight: 60,
+    minWidth: 160,
     marginBottom: 10,
-    marginRight: 10,
+    marginRight: 15,
     marginLeft: "auto",
-    paddingLeft: 20,
-
-    fontFamily: "Lora-Regular",
-    fontSize: 18,
-    color: "#fff",
+    paddingHorizontal: 18,
 
     borderWidth: 1,
     borderColor: "#63D471",
-    borderRadius: 15,
+    borderRadius: 20,
+  },
+
+  commentText: {
+    marginVertical: 10,
+    fontFamily: "Lora-Regular",
+    fontSize: 18,
+    color: "#fff",
+  },
+
+  name: {
+    marginLeft: "auto",
+    marginRight: 20,
+
+    fontFamily: "Lora-Bold",
+    fontSize: 22,
+    color: "#fff",
+    textDecorationLine: "underline",
+    textDecorationColor: " #4E7D55",
+  },
+
+  ownName: {
+    marginLeft: 20,
+    marginRight: "auto",
+
+    fontFamily: "Lora-Bold",
+    fontSize: 22,
+    color: "#63D471",
+    textDecorationLine: "underline",
+    textDecorationColor: " #4E7D55",
   },
 
   // *input Form

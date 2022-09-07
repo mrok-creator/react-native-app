@@ -105,6 +105,14 @@ export default function SignUpScreen({ navigation }) {
           <View
             style={{
               ...styles.form,
+              ...Platform.select({
+                ios: {
+                  paddingBottom: isKeyboardShow ? 238 : 30,
+                },
+                android: {
+                  paddingBottom: 32,
+                },
+              }),
             }}
           >
             <KeyboardAvoidingView
@@ -159,7 +167,7 @@ export default function SignUpScreen({ navigation }) {
               <TouchableOpacity
                 onPress={() => navigation.navigate("Login")}
                 style={{
-                  marginTop: 12,
+                  marginTop: 10,
                   alignSelf: "center",
                 }}
               >
@@ -200,7 +208,7 @@ const styles = StyleSheet.create({
 
   form: {
     backgroundColor: "#0F4F49",
-    paddingBottom: 32,
+
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
   },

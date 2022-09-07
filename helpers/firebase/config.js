@@ -1,8 +1,8 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyDbpNc_7GccLWABa2blztjH7L7-R74UEFc",
-  authDomain: "rn-places-93a30.firebaseapp.com",
-  projectId: "rn-places-93a30",
-  storageBucket: "rn-places-93a30.appspot.com",
-  messagingSenderId: "148702814695",
-  appId: "1:148702814695:web:12d18d141e481b093cdd42",
+  apiKey: "AIzaSyDja0Th-wx41yG-aEc2zweDOXhQYzaDmj0",
+  authDomain: "places-a5589.firebaseapp.com",
+  projectId: "places-a5589",
+  storageBucket: "places-a5589.appspot.com",
+  messagingSenderId: "708706167388",
+  appId: "1:708706167388:web:7a2095179f8cc6716d1499",
 };

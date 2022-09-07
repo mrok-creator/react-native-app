@@ -18,6 +18,7 @@ import {
   collection,
   query,
   onSnapshot,
+  orderBy,
 } from "firebase/firestore";
 
 // import icons
@@ -37,7 +38,15 @@ export default function DefaultPostScreen({ navigation }) {
     const app = initializeApp(firebaseConfig);
     const fbStore = getFirestore(app);
 
-    const q = query(collection(fbStore, "posts"));
+    //! import { query, where, orderBy } from "firebase/firestore";
+
+    //! const q = query(
+    //!   citiesRef,
+    //!   where("population", ">", 100000),
+    //!   orderBy("population")
+    //! );
+
+    const q = query(collection(fbStore, "posts"), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (data) => {
       setPosts([]);
       data.forEach((doc) => {
@@ -63,7 +72,12 @@ export default function DefaultPostScreen({ navigation }) {
         <View style={styles.btnWrapper}>
           <Text style={styles.title}>{title}</Text>
           <TouchableOpacity
-            style={{ ...styles.btn, left: 20, bottom: 10 }}
+            style={{
+              ...styles.btn,
+              position: "absolute",
+              left: 20,
+              bottom: 10,
+            }}
             onPress={() => {
               navigation.navigate("Comments", { id, photo, uid, nickName });
             }}
@@ -72,7 +86,7 @@ export default function DefaultPostScreen({ navigation }) {
             <FontAwesome5 name="comment" size={30} color="#63D471" />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ ...styles.btn, left: 120, bottom: 10 }}
+            style={{ ...styles.btn, marginRight: 5, marginLeft: "auto" }}
             onPress={() => {
               navigation.navigate("Map", { coords, locationTitle });
             }}
@@ -130,7 +144,6 @@ const styles = StyleSheet.create({
   },
 
   btn: {
-    position: "absolute",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -139,7 +152,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#0F4F49",
     marginRight: 10,
     marginLeft: "auto",
-    marginBottom: 25,
+    marginBottom: 20,
+    marginTop: 10,
 
     borderRadius: 10,
   },
@@ -150,7 +164,8 @@ const styles = StyleSheet.create({
 
     marginRight: "auto",
     marginLeft: 10,
-    marginBottom: 25,
+    marginBottom: 20,
+    marginTop: 10,
 
     borderRadius: 10,
   },

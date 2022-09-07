@@ -18,7 +18,7 @@ import {
 // import icons font
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { addToCollection } from "../../helpers/firebase/fireStore";
+import { addToPostCollection } from "../../helpers/firebase/fireStore";
 import useId from "../../helpers/hooks/useUserId";
 import useName from "../../helpers/hooks/useName";
 
@@ -35,10 +35,10 @@ export default function CreatePostScreen({ route, navigation }) {
   const locationHandler = (text) => setLocTitle(text);
 
   const uploadPost = async () => {
-    //  ! do post logick
-    // ? addToCollection = async (collectionName, collectionData)
-    const collection = "posts";
+    const date = Date.now().toString();
+
     const post = {
+      createdAt: date,
       owner: uid,
       ownerName: displayName,
       photo,
@@ -47,7 +47,7 @@ export default function CreatePostScreen({ route, navigation }) {
       locationTitle: locTitle,
     };
 
-    return (response = await addToCollection(collection, post));
+    return (response = await addToPostCollection(post));
   };
 
   const onSubmit = async () => {

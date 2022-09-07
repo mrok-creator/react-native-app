@@ -95,10 +95,25 @@ export default function SignInScreen({ navigation }) {
           <View
             style={{
               ...styles.form,
+              ...Platform.select({
+                ios: {
+                  paddingBottom: isKeyboardShow ? 238 : 30,
+                },
+                android: {
+                  paddingBottom: 32,
+                },
+              }),
             }}
           >
             <KeyboardAvoidingView
               behavior={Platform.OS == "ios" ? "padding" : "height"}
+              // style={{
+              //   ...Platform.select({
+              //     ios: {
+              //       paddingBottom: isKeyboardShow ? 120 : 0,
+              //     },
+              //   }),
+              // }}
             >
               <View style={styles.headerTitle}>
                 <Text style={styles.headerText}>Увійти до профілю</Text>
@@ -176,7 +191,7 @@ const styles = StyleSheet.create({
 
   form: {
     backgroundColor: "#0F4F49",
-    paddingBottom: 32,
+    // paddingBottom: 32,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
   },
