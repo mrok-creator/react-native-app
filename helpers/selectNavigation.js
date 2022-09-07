@@ -44,27 +44,6 @@ export const selectNavigation = (isLogin) => {
         paddingBottom: 10,
       }}
     >
-      {/* PROFILE SCREEN */}
-      <MainTabs.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <AntDesign
-              name="user"
-              size={30}
-              color={!focused ? "#fff" : "#63D471"}
-              style={{
-                width: 46,
-                height: 46,
-                marginTop: 0,
-                textAlign: "center",
-              }}
-            />
-          ),
-        }}
-      />
-
       {/* POSTS SCREEN */}
       <MainTabs.Screen
         name="Posts"
@@ -105,6 +84,27 @@ export const selectNavigation = (isLogin) => {
           ),
         }}
         style={{}}
+      />
+
+      {/* PROFILE SCREEN */}
+      <MainTabs.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <AntDesign
+              name="user"
+              size={30}
+              color={!focused ? "#fff" : "#63D471"}
+              style={{
+                width: 46,
+                height: 46,
+                marginTop: 0,
+                textAlign: "center",
+              }}
+            />
+          ),
+        }}
       />
     </MainTabs.Navigator>
   );
