@@ -55,8 +55,9 @@ export default function CommentsScreen({ route }) {
       orderBy("createdAt", "desc")
     );
     //! const q = query(collection(fbStore, "posts"), orderBy("createdAt", "desc"));
-    setCommentsList([]);
+
     const unsubscribe = onSnapshot(q, (data) => {
+      setCommentsList([]);
       data.forEach((doc) => {
         setCommentsList((prevComment) => {
           const newComment = { ...doc.data(), id: doc.id };

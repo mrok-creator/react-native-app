@@ -102,7 +102,6 @@ export default function CreateScreen({ navigation }) {
 
   const takePhoto = async () => {
     const { coords } = await Location.getCurrentPositionAsync({ accuracy: 1 });
-    console.log("================>", coords);
 
     const imgRef = await uploadPhoto();
 
