@@ -38,14 +38,6 @@ export default function DefaultPostScreen({ navigation }) {
     const app = initializeApp(firebaseConfig);
     const fbStore = getFirestore(app);
 
-    //! import { query, where, orderBy } from "firebase/firestore";
-
-    //! const q = query(
-    //!   citiesRef,
-    //!   where("population", ">", 100000),
-    //!   orderBy("population")
-    //! );
-
     const q = query(collection(fbStore, "posts"), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (data) => {
       setPosts([]);

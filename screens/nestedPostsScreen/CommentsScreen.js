@@ -183,11 +183,8 @@ const styles = StyleSheet.create({
 
   imgBg: {
     position: "relative",
-
     flex: 1,
     justifyContent: "flex-end",
-
-    // resizeMode: "cover",
   },
   // *post img
   post: {
@@ -312,5 +309,16 @@ const styles = StyleSheet.create({
     fontFamily: "Lora-Regular",
     color: "#63D471",
     fontSize: 18,
+  },
+
+  btnWrapper: {
+    position: "relative",
+    justifyContent: "flex-start",
+    height: 80,
+  },
+
+  btn: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
