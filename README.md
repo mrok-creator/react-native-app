@@ -3,7 +3,7 @@
 ## Places
 ### An app for sharing your favorite places with others and having a possibility to visit  recommended those  places that you like
 
-####For the open live version, you need to have the app "Expo Go" on your phone :
+#### For the open live version, you need to have the app "Expo Go" on your phone :
 
 1. start "yarn" in your terminal to initialize all dependencies
   1. "npm init" if you use npm
@@ -15,4 +15,4 @@
   
   
 #### Or you can download "Expo Go" and follow the link in your phone to open app in "expo go" from expo-market:
-[Open by using phone with installed Expo Go]:exp://exp.host/@mrok-creator/places
+*[Places app]:exp://exp.host/@mrok-creator/places -  Open by using phone with installed Expo Go 
