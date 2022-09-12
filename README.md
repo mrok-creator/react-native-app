@@ -15,4 +15,4 @@
   
   
 #### Or you can download "Expo Go" and follow the link in your phone to open app in "expo go" from expo-market:
-* [Places app]:exp://exp.host/@mrok-creator/places -  Open by using phone with installed Expo Go 
+* [Places app](exp://exp.host/@mrok-creator/places) -  Open by using phone with installed Expo Go 
