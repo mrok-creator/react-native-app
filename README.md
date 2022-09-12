@@ -1,6 +1,6 @@
-# react-native-app
 
-## Places
+
+# Places
 ### An app for sharing your favorite places with others and having a possibility to visit  recommended those  places that you like
 
 #### For the open live version, you need to have the app "Expo Go" on your phone :
