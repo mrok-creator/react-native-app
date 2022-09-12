@@ -9,14 +9,25 @@ export const signUp = createAsyncThunk(
     try {
       const { email, photoURL, uid, displayName } = await db.register(data);
 
-      //   Notify.success(
-      //     " You will receive an email in a few minutes, please verify your email to continue."
-      //   );
       const user = { email, photoURL, uid, displayName };
 
       return user;
     } catch (error) {
-      //   Notify.failure("Something went wrong, please try again later");
+      Alert.alert(
+        "Помилка входу",
+        "Щось пішло не так \n Перевірте дані та спробуйте ще раз",
+        [
+          {
+            text: "OK",
+            onPress: () => console.log("Ok pressed"),
+          },
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+        ]
+      );
       return rejectWithValue(error);
     }
   }
@@ -34,7 +45,22 @@ export const signIn = createAsyncThunk(
       const user = { email, photoURL, uid, displayName };
       return user;
     } catch (error) {
-      //   Notify.failure("Something went wrong, please try again later");
+      Alert.alert(
+        "Помилка входу",
+        "Щось пішло не так \n Перевірте дані та спробуйте ще раз",
+        [
+          {
+            text: "OK",
+            onPress: () => console.log("Ok pressed"),
+          },
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+        ]
+      );
+      console.log(error.text);
       return rejectWithValue(error);
     }
   }
@@ -50,6 +76,7 @@ export const logOut = createAsyncThunk(
       return user;
     } catch (error) {
       // Notify.failure('Something went wrong, please try again later');
+
       return rejectWithValue(error);
     }
   }

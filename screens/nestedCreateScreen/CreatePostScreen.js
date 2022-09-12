@@ -93,9 +93,7 @@ export default function CreatePostScreen({ route, navigation }) {
           <View style={styles.item}>
             <ImageBackground
               style={styles.img}
-              // source={require("../../assets/images/bg-art.jpg")}
               source={{ uri: photo }}
-              //   ! need change img uri
             ></ImageBackground>
           </View>
           <KeyboardAvoidingView
@@ -122,9 +120,10 @@ export default function CreatePostScreen({ route, navigation }) {
                 keyboardAppearance={"dark"}
                 placeholderTextColor={"#63D471"}
                 onFocus={() => {
-                  if (!isKeyboardShow) {
-                    setIsKeyboardShow(true);
+                  if (isKeyboardShow) {
+                    return;
                   }
+                  setIsKeyboardShow(true);
                 }}
               />
               <TextInput
@@ -135,7 +134,10 @@ export default function CreatePostScreen({ route, navigation }) {
                 keyboardAppearance={"dark"}
                 placeholderTextColor={"#63D471"}
                 onFocus={() => {
-                  if (!isKeyboardShow) setIsKeyboardShow(true);
+                  if (isKeyboardShow) {
+                    return;
+                  }
+                  setIsKeyboardShow(true);
                 }}
               />
               <View style={styles.btnWrapper}>

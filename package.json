@@ -12,6 +12,7 @@
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^0.17.0",
     "@koale/useworker": "4.0.2",
+    "@react-native-async-storage/async-storage": "^1.17.10",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/material-bottom-tabs": "^6.2.3",
     "@react-navigation/native": "^6.0.12",

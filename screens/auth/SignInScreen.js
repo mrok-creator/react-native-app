@@ -58,8 +58,9 @@ export default function SignInScreen({ navigation }) {
       dispatch(signIn(newData));
       setName("");
       setPassword("");
-
+      Keyboard.dismiss();
       setIsKeyboardShow(false);
+
       return;
     }
     Alert.alert(

@@ -69,6 +69,7 @@ export default function SignUpScreen({ navigation }) {
       setEmail("");
       setPassword("");
 
+      Keyboard.dismiss();
       setIsKeyboardShow(false);
       return;
     }

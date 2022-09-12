@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
 
   titlePermission: {
     marginBottom: 25,
-    marginHorizontal: 8,
+    marginHorizontal: 30,
     padding: 10,
     textAlign: "center",
     alignItems: "center",
@@ -217,10 +217,12 @@ const styles = StyleSheet.create({
 
   permissionBtn: {
     height: 44,
-    marginHorizontal: 50,
+    marginHorizontal: 80,
 
     marginBottom: 25,
     alignItems: "center",
+    justifyContent: "center",
+
     backgroundColor: "#0F4F49",
     borderWidth: 1,
     borderColor: "#63D471",
